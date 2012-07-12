@@ -29,3 +29,15 @@ def geocode_address_google(street,city,zip_code=''):
 	except Exception:
 		return None
 
+
+def geocode_address(street, city, zip_code=''):
+	result = geocode_address_uri(street, city, zip_code)
+	
+	# try google if it fails
+	if result == None:
+		result = geocode_address_google(street, city, zip_code)
+
+	return result
+
+
+
