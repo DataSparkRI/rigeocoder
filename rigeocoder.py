@@ -16,10 +16,10 @@ def geocode_address_uri(street, city, zip_code = ''):
 	if 'candidates' in json_data: #address was geocoded
 		if json_data['candidates']:
 			return (json_data['candidates'][0]['location']['y'], json_data['candidates'][0]['location']['x'])
-		
+
 	return None
 
-def geocode_address_google(street,city,zip_code=''):
+def geocode_address_google(street, city, zip_code=''):
 	address = "%s %s %s" % (street, city, zip_code)
 	try:
 		google = geocoders.Google()
@@ -29,13 +29,21 @@ def geocode_address_google(street,city,zip_code=''):
 	except Exception:
 		return None
 
+def geocode_address_dotus(street, city, zip_code=''):
+    address = "%s %s, %s" % (street, city, zip_code)
+    try:
+        us = geocoders.GeocoderDotUS()
+        place, (lat, lng) = us.geocode(address)
+        return (lat,lng)
+    except Exception:
+        return None
 
 def geocode_address(street, city, zip_code=''):
 	result = geocode_address_uri(street, city, zip_code)
-	
-	# try google if it fails
+
+	# try dotus if it fails
 	if result == None:
-		result = geocode_address_google(street, city, zip_code)
+		result = geocode_address_dotus(street, city, zip_code)
 
 	return result
 
