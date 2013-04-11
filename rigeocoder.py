@@ -11,16 +11,14 @@ def geocode_address_uri(street, city, zip_code = ''):
     urllib.quote_plus(city)
     req_url = "%s?Street=%s&City=%s&ZIP=%s&outSR=%s&f=%s" % (base_url, street, city, zip_code, wkid, out_form)
     raw_data = urllib.urlopen(req_url)
-    json_data = json.loads(raw_data.read())
-    results = []
-    if 'candidates' in json_data: #address was geocoded
-        if json_data['candidates']:
-            for cand in json_data['candidates']:
-                if float(cand['score']) > 80:
-                    results.append((cand['address'], (cand['location']['y'], cand['location']['x'])))
-            return results
+    try:
+        json_data = json.loads(raw_data.read())
 
-	return None
+        if 'candidates' in json_data: #address was geocoded
+            if json_data['candidates']:
+                return (json_data['candidates'][0]['location']['y'], json_data['candidates'][0]['location']['x'])
+    except ValueError:
+        return None
 
 def geocode_address_google(street, city, zip_code=''):
 	address = "%s %s %s" % (street, city, zip_code)
