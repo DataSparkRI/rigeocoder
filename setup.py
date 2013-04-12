@@ -3,6 +3,7 @@ setup(
     name='rigeocoder',
     version='0.9',
     license="BSD",
+    py_modules = ['rigeocoder'],
     
     install_requires = ["geopy>=0.94.2"],
 
