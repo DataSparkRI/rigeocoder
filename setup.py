@@ -3,10 +3,10 @@ setup(
     name='rigeocoder',
     version='0.9',
     license="BSD",
-    
+
     install_requires = ["geopy>=0.94.2"],
 
-    description = 'Rhode Island Geocoding with URI + google fallback',
+    description = 'Rhode Island Geocoding with URI + geous fallback',
 
     author='Provplan',
     author_email='amedrano@provplan.org',
