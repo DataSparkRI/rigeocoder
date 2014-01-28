@@ -5,7 +5,7 @@ setup(
     license="BSD",
     py_modules = ['rigeocoder'],
 
-    install_requires = ["geopy>=0.94.2"],
+    install_requires = ["geopy>=0.97"],
 
     description = 'Rhode Island Geocoding with URI + geous fallback',
 

@@ -1,10 +1,15 @@
 import urllib
 import json
 from geopy import geocoders
+import logging
 
 base_url = 'http://maps.edc.uri.edu/ArcGIS/rest/services/Atlas_location/address_locator/GeocodeServer/findAddressCandidates'
 wkid = '4269' #GCS_North_American_1983
 out_form = 'json'
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def geocode_address_uri(street, city, zip_code = ''):
     urllib.quote_plus(street)
@@ -12,6 +17,7 @@ def geocode_address_uri(street, city, zip_code = ''):
     req_url = "%s?Street=%s&City=%s&ZIP=%s&outSR=%s&f=%s" % (base_url, street, city, zip_code, wkid, out_form)
     raw_data = urllib.urlopen(req_url)
     results = []
+    logger.info("Attempting to geocode [%s, %s, %s] with URI" % (street, city, zip_code))
     try:
         json_data = json.loads(raw_data.read())
 
@@ -33,6 +39,7 @@ def geocode_address_google(street, city, zip_code=''):
     address = "%s %s %s" % (street, city, zip_code)
     results = []
     google = geocoders.GoogleV3()
+    logger.info("Attempting to geocode [%s] with Google" % address)
     try:
         place, geocode = google.geocode(address)
         results.append({'address':place,
@@ -55,10 +62,12 @@ def geocode_address_dotus(street, city, zip_code='', state=None):
     else:
         state = ""
     address = "%s,  %s, %s" % (street, city, state)
-    us = geocoders.GeocoderDotUS()
+    logger.info("Attempting to geocode [%s] with DotUs" % address)
+    us = geocoders.GeocoderDotUS(format_string="%s")
     results = []
     try:
         place, (lat, lng) = us.geocode(address)
+
         results.append({'address':place,
                         'lat':lat,
                         'lng':lng})
@@ -68,13 +77,14 @@ def geocode_address_dotus(street, city, zip_code='', state=None):
     return results
 
 def geocode_address(street, city, zip_code=''):
-	result = geocode_address_uri(street, city, zip_code)
+    result = geocode_address_uri(street, city, zip_code)
+    # try dotus if it fails
+    if len(result) == 0:
+        result = geocode_address_dotus(street, city, zip_code)
+        if len(result) == 0:
+            result = geocode_address_google(street, city, zip_code)
 
-	# try dotus if it fails
-	if result == None:
-		result = geocode_address_dotus(street, city, zip_code)
-
-	return result
+    return result
 
 
 

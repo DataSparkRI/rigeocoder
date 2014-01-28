@@ -30,12 +30,14 @@ class test_rigeocoder(TestCase):
         self.assertEqual(result,
             [{'lat': 41.8312, 'lng': -71.413701, 'address': u'82 Smith St, Providence, RI 02908'}])
 
-
     def test_full_geocoder(self):
         """ This test should return the uri results"""
         result = geocode_address(self.street, self.city, self.zip_code)
         self.assertEqual(result,
                          [{'lat': 41.83109769968133, 'lng': -71.41494403284543, 'address': u'82 SMITH ST, PROVIDENCE 02908'}, {'lat': 41.84791036607282, 'lng': -71.45576688783409, 'address': u'82 SMITH ST, PROVIDENCE 02911'}])
+
+    def test_outofstate(self):
+        result = geocode_address("414 Grant Street","Pittsburgh", "PA")
 
 
 if __name__ == '__main__':
